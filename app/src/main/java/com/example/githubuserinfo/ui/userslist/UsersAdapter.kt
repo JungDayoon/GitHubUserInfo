@@ -12,32 +12,34 @@ import com.bumptech.glide.Glide
 import com.example.githubuserinfo.R
 import com.example.githubuserinfo.data.User
 
-class UsersAdapter(private val context: Context, private val usersList: List<User>) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
+class UsersAdapter(private val context: Context) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
 
-//    private var usersList: List<User> = ArrayList(0)
+    private var usersList= arrayListOf<User>()
 
     inner class UserViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val userName: TextView = view.findViewById(R.id.user_name)
-        val userThumbnail: ImageView = view.findViewById(R.id.user_thumbnail)
+        private val userName: TextView = view.findViewById(R.id.user_name)
+        private val userThumbnail: ImageView = view.findViewById(R.id.user_thumbnail)
+
+        fun bind(user: User) {
+            userName.text = user.login
+            Glide.with(context).load(user.avatar_url).override(100).into(userThumbnail)
+        }
     }
 
-//    fun bindData(users: List<User>) {
-//        usersList = ArrayList(users)
-//        Log.d(TAG, "bindData usersList: $usersList")
-//        notifyDataSetChanged()
-//    }
+    fun bindData(users: List<User>) {
+        Log.d(TAG, "bindData usersList: $users")
+        usersList.clear()
+        usersList.addAll(users)
+        this.notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        Log.d(TAG, "onCreateViewHolder called")
-        val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.layout_user_item, parent, false)
+        val itemView = LayoutInflater.from(context).inflate(R.layout.layout_user_item, parent, false)
         return UserViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        Log.d(TAG, "onBindViewHolder called name: ${usersList[position].login}")
-        holder.userName.text = usersList[position].login
-        Glide.with(context).load(usersList[position].avatar_url).override(100).into(holder.userThumbnail)
+        holder.bind(usersList[position])
     }
 
     override fun getItemCount(): Int {

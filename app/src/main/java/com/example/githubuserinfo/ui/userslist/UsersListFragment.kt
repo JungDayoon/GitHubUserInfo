@@ -9,30 +9,20 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.githubuserinfo.R
-import com.example.githubuserinfo.data.User
 import kotlinx.android.synthetic.main.layout_users_list.*
 
 class UsersListFragment : Fragment() {
 
     private lateinit var viewModel: UsersListViewModel
-
-    private val adapter: UsersAdapter by lazy {
-        UsersAdapter(requireContext(), userList)
-    }
-
-    private var userList = listOf<User>()
+    private lateinit var adapter: UsersAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.layout_users_list, container, false)
-        initViewModel()
-        initAdapter()
-        return view
+        return inflater.inflate(R.layout.layout_users_list, container, false)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,28 +32,22 @@ class UsersListFragment : Fragment() {
         viewModel.fetchUserList()
     }
 
-    private fun initViewModel() {
-        viewModel.isShowProgress.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "isShowProgress: $it")
-            if (it) {
-                swipeRefresh.visibility = View.VISIBLE
-            } else {
-                swipeRefresh.visibility = View.GONE
-            }
-        })
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initViewModel()
+        initAdapter()
+    }
 
+    private fun initViewModel() {
         viewModel.usersList.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "usersList: $it")
-            userList = it
-            adapter.notifyDataSetChanged()
+            adapter.bindData(it)
         })
     }
 
     private fun initAdapter() {
-
-        recycler.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+        adapter = UsersAdapter(requireContext())
+        recycler.layoutManager = LinearLayoutManager(activity)
         recycler.adapter = adapter
-
     }
 
     companion object {
