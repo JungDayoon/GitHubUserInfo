@@ -5,30 +5,24 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.githubuserinfo.data.User
+import com.example.githubuserinfo.di.activity.ActivityScope
 import com.example.githubuserinfo.network.GitHubApi
 import kotlinx.coroutines.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
-class UsersListViewModel: ViewModel(){
+@ActivityScope
+class UsersListViewModel @Inject constructor(val gitHubApi: GitHubApi): ViewModel(){
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     private val _isShowProgress = MutableLiveData<Boolean>(false)
     val isShowProgress: LiveData<Boolean> get() = _isShowProgress
 
-    private var gitHubApi: GitHubApi
-
     private val _usersList = MutableLiveData<List<User>>()
     val usersList: MutableLiveData<List<User>> get() = _usersList
 
-    init {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.github.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        gitHubApi = retrofit.create(GitHubApi::class.java)
-    }
+//    @Inject lateinit var gitHubApi: GitHubApi
 
     fun fetchUserList() {
         Log.d(TAG, "fetchUsersList")

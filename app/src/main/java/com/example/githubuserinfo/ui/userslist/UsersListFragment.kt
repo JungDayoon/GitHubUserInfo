@@ -10,11 +10,17 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.githubuserinfo.R
+import com.example.githubuserinfo.di.viewmodel.ViewModelFactory
+import com.example.githubuserinfo.network.GitHubApi
+import com.example.githubuserinfo.ui.common.BaseFragment
 import kotlinx.android.synthetic.main.layout_users_list.*
+import javax.inject.Inject
 
-class UsersListFragment : Fragment() {
+class UsersListFragment : BaseFragment() {
+    private val viewModel: UsersListViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory).get(UsersListViewModel::class.java)
+    }
 
-    private lateinit var viewModel: UsersListViewModel
     private lateinit var adapter: UsersAdapter
 
     override fun onCreateView(
@@ -28,7 +34,7 @@ class UsersListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProvider(this).get(UsersListViewModel::class.java)
+        injector.inject(this)
         viewModel.fetchUserList()
     }
 
