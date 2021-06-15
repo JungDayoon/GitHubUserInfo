@@ -1,5 +1,6 @@
 package com.example.githubuserinfo.ui.userslist
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,7 +22,7 @@ class UsersListFragment : BaseFragment() {
         ViewModelProvider(this, viewModelFactory).get(UsersListViewModel::class.java)
     }
 
-    private lateinit var adapter: UsersAdapter
+    @Inject lateinit var adapter: UsersAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,11 +34,14 @@ class UsersListFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        injector.inject(this)
         viewModel.fetchUserList()
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        injector.inject(this)
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
@@ -51,7 +55,6 @@ class UsersListFragment : BaseFragment() {
     }
 
     private fun initAdapter() {
-        adapter = UsersAdapter(requireContext())
         recycler.layoutManager = LinearLayoutManager(activity)
         recycler.adapter = adapter
     }

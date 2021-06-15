@@ -7,14 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.githubuserinfo.R
 import com.example.githubuserinfo.data.User
+import javax.inject.Inject
 
-class UsersAdapter(private val context: Context) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
+class UsersAdapter @Inject constructor(private val activity: AppCompatActivity) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
 
-    private var usersList= arrayListOf<User>()
+    private var usersList = arrayListOf<User>()
 
     inner class UserViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val userName: TextView = view.findViewById(R.id.user_name)
@@ -22,7 +24,7 @@ class UsersAdapter(private val context: Context) : RecyclerView.Adapter<UsersAda
 
         fun bind(user: User) {
             userName.text = user.login
-            Glide.with(context).load(user.avatar_url).override(100).into(userThumbnail)
+            Glide.with(activity).load(user.avatar_url).override(100).into(userThumbnail)
         }
     }
 
@@ -34,7 +36,7 @@ class UsersAdapter(private val context: Context) : RecyclerView.Adapter<UsersAda
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        val itemView = LayoutInflater.from(context).inflate(R.layout.layout_user_item, parent, false)
+        val itemView = LayoutInflater.from(activity).inflate(R.layout.layout_user_item, parent, false)
         return UserViewHolder(itemView)
     }
 
