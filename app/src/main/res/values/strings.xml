@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">GitHubUserInfo</string>
+    <string name="scheme_name">githubuserinfo</string>
 </resources>

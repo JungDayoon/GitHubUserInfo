@@ -1,6 +1,5 @@
 package com.example.githubuserinfo.ui.userslist
 
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View

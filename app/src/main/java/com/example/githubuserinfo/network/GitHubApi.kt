@@ -13,6 +13,7 @@ interface GitHubApi {
     @GET("/users")
     fun getUserList(
         @Header("accept") accept: String,
+        @Query("authorization") authorization: String?,
         @Query("since") since: Long?,
         @Query("per_page") perPage: Int?
     ): Single<Response<List<User>>>
