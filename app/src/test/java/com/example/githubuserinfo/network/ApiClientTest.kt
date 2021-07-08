@@ -35,7 +35,6 @@ class ApiClientTest {
 
     @Before
     fun setUp() {
-        MockitoAnnotations.initMocks(this)
         Mockito.mockStatic(Log::class.java)
 
         Mockito.`when`(gitHubApiClient.fetchUserList(0, 20, null)).thenReturn(Single.just(Response.success(fakeUsersList)))

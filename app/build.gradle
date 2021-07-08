@@ -70,4 +70,5 @@ dependencies {
     testImplementation "org.mockito:mockito-inline:$mockito_version"
 
     testImplementation "androidx.arch.core:core-testing:2.1.0"
+    testImplementation "com.google.truth:truth:0.36"
 }

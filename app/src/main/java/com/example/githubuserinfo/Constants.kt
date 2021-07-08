@@ -2,7 +2,7 @@ package com.example.githubuserinfo
 
 object Constants {
     const val usersAccept = "Accept: application/vnd.github.v3+json"
-    const val accessTokenAccept = "Accept: application/json"
+    const val accessTokenAccept = "application/json"
 
     const val githubUrl = "https://github.com"
     const val githubApiUrl = "https://api.github.com"

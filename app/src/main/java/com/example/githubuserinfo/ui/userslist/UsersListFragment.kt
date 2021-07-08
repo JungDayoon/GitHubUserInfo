@@ -98,6 +98,7 @@ class UsersListFragment : BaseFragment() {
         })
 
         viewModel.accessToken.observe(viewLifecycleOwner, Observer {
+            Log.d("oauthTest", "accessToken changed: " + it)
             viewModel.fetchUserList(it.access_token)
         })
     }

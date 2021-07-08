@@ -33,13 +33,14 @@ class UsersListViewModel @Inject constructor(
 
     fun fetchUserList(token: String?) {
         disposeBag.add(gitHubApiClient.fetchUserList(0, 20, token)
-            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
             .doOnSuccess{ response ->
                 if (!response.isSuccessful || response.body() == null) {
                     Log.e(TAG, "fetchUserLists error: response is not successful or response.body is null")
                     return@doOnSuccess
                 }
+                Log.d("oauthTest", "userList success: " + response.body())
                 _usersList.postValue(response.body())
             }
             .doOnError{
@@ -59,6 +60,7 @@ class UsersListViewModel @Inject constructor(
                     Log.e(TAG, "fetchAccessToken error: response is not successful or response.body is null")
                     return@doOnSuccess
                 }
+                Log.d("oauthTest", "responseBody: ${response.body()}")
                 _accessToken.value = response.body()
             }
             .doOnError {
