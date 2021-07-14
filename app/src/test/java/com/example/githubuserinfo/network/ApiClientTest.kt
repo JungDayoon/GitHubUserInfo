@@ -8,6 +8,7 @@ import io.reactivex.Single
 import org.junit.*
 import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.MockedStatic
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnit
@@ -33,9 +34,11 @@ class ApiClientTest {
     private var fakeUsersList = listOf<User>()
     private var fakeAccessToken = AccessToken("", "", "")
 
+    private var mockedLog: MockedStatic<Log>? = null
+
     @Before
     fun setUp() {
-        Mockito.mockStatic(Log::class.java)
+        mockedLog = Mockito.mockStatic(Log::class.java)
 
         Mockito.`when`(gitHubApiClient.fetchUserList(0, 20, null)).thenReturn(Single.just(Response.success(fakeUsersList)))
         Mockito.`when`(gitHubAuthApiClient.fetchAccessToken("")).thenReturn(Single.just(Response.success(fakeAccessToken)))
@@ -43,7 +46,7 @@ class ApiClientTest {
 
     @After
     fun tearDown() {
-
+        mockedLog?.close()
     }
 
     @Test
