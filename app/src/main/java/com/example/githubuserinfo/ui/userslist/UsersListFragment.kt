@@ -73,6 +73,10 @@ class UsersListFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.login_menu -> {
+                if (accessTokenController.token != null) {
+                    return true
+                }
+
                 val intent = Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse(
