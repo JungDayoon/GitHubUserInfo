@@ -8,6 +8,7 @@ import com.example.githubuserinfo.data.User
 import com.example.githubuserinfo.getOrAwaitValue
 import com.example.githubuserinfo.network.GitHubApiClient
 import com.example.githubuserinfo.network.GitHubAuthApiClient
+import com.example.githubuserinfo.ui.common.AccessTokenController
 import com.example.githubuserinfo.ui.userslist.UsersListViewModel
 import io.reactivex.Single
 import org.junit.*
@@ -37,6 +38,7 @@ class UsersListViewModelTest {
     lateinit var viewModel: UsersListViewModel
     @Mock lateinit var gitHubAuthApiClient: GitHubAuthApiClient
     @Mock lateinit var gitHubApiClient: GitHubApiClient
+    @Mock lateinit var accessTokenController: AccessTokenController
 
     private var fakeUsersList = listOf<User>()
     private var fakeAccessToken = AccessToken("", "", "")
@@ -47,7 +49,7 @@ class UsersListViewModelTest {
     fun setUp() {
         mockedLog = mockStatic(Log::class.java)
 
-        viewModel = spy(UsersListViewModel(gitHubApiClient, gitHubAuthApiClient))
+        viewModel = spy(UsersListViewModel(gitHubApiClient, gitHubAuthApiClient, accessTokenController))
 
         `when`(gitHubApiClient.fetchUserList(0, 20, null)).thenReturn(Single.just(Response.success(fakeUsersList)))
         `when`(gitHubAuthApiClient.fetchAccessToken("")).thenReturn(Single.just(Response.success(fakeAccessToken)))
