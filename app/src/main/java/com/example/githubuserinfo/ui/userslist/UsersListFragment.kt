@@ -4,14 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.githubuserinfo.Constants
 import com.example.githubuserinfo.OAuth
 import com.example.githubuserinfo.R
+import com.example.githubuserinfo.ui.common.AccessTokenController
 import com.example.githubuserinfo.ui.common.BaseFragment
 import kotlinx.android.synthetic.main.layout_users_list.*
 import javax.inject.Inject
@@ -23,6 +24,8 @@ class UsersListFragment : BaseFragment() {
 
     @Inject lateinit var adapter: UsersAdapter
 
+    @Inject lateinit var accessTokenController: AccessTokenController
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,7 +36,7 @@ class UsersListFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.fetchUserList(null)
+        viewModel.fetchUserList()
     }
 
     override fun onAttach(context: Context) {
@@ -43,8 +46,8 @@ class UsersListFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initView()
         initViewModel()
-        initAdapter()
         setHasOptionsMenu(true)
     }
 
@@ -53,7 +56,6 @@ class UsersListFragment : BaseFragment() {
 
         val uri = activity?.intent?.data
 
-        Log.d(TAG, "uri: $uri")
         uri?.let {
             if (uri.toString().startsWith(Constants.redirectUri(getString(R.string.scheme_name)))) {
                 uri.getQueryParameter(Constants.queryParamCode)?.let { code ->
@@ -92,20 +94,38 @@ class UsersListFragment : BaseFragment() {
 
         return super.onOptionsItemSelected(item)
     }
+
+    private fun initView() {
+        swipeRefresh.setOnRefreshListener {
+            viewModel.fetchUserList()
+        }
+
+        recycler.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if (!recycler.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    viewModel.fetchUserList()
+                }
+            }
+        })
+        recycler.layoutManager = LinearLayoutManager(activity)
+        recycler.adapter = adapter
+    }
+
     private fun initViewModel() {
         viewModel.usersList.observe(viewLifecycleOwner, Observer {
             adapter.bindData(it)
         })
 
         viewModel.accessToken.observe(viewLifecycleOwner, Observer {
-            Log.d("oauthTest", "accessToken changed: " + it)
-            viewModel.fetchUserList(it.access_token)
+            accessTokenController.token = it
+            viewModel.fetchUserList()
         })
-    }
 
-    private fun initAdapter() {
-        recycler.layoutManager = LinearLayoutManager(activity)
-        recycler.adapter = adapter
+        viewModel.isShowProgress.observe(viewLifecycleOwner, Observer {
+            swipeRefresh.isRefreshing = it
+        })
     }
 
     companion object {

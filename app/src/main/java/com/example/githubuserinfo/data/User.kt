@@ -2,7 +2,7 @@ package com.example.githubuserinfo.data
 
 data class User(
     var login: String,
-    var id: Int,
+    var id: Long,
     var node_id: String,
     var avatar_url: String,
     var gravatar_id: String,

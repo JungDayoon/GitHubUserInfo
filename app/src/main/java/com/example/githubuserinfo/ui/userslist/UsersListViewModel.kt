@@ -10,6 +10,7 @@ import com.example.githubuserinfo.data.User
 import com.example.githubuserinfo.di.activity.ActivityScope
 import com.example.githubuserinfo.network.GitHubApiClient
 import com.example.githubuserinfo.network.GitHubAuthApiClient
+import com.example.githubuserinfo.ui.common.AccessTokenController
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @ActivityScope
 class UsersListViewModel @Inject constructor(
     private val gitHubApiClient: GitHubApiClient,
-    private val gitHubAuthApiClient: GitHubAuthApiClient
+    private val gitHubAuthApiClient: GitHubAuthApiClient,
+    private val accessTokenController: AccessTokenController
 ): ViewModel(){
 
     private val _isShowProgress = MutableLiveData<Boolean>(false)
@@ -31,8 +33,9 @@ class UsersListViewModel @Inject constructor(
 
     private val disposeBag = DisposeBag()
 
-    fun fetchUserList(token: String?) {
-        disposeBag.add(gitHubApiClient.fetchUserList(0, 20, token)
+    fun fetchUserList() {
+        _isShowProgress.postValue(true)
+        disposeBag.add(gitHubApiClient.fetchUserList((_usersList.value?.last()?.id ?: -1L) + 1L, PER_PAGE, accessTokenController.token?.access_token)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .doOnSuccess{ response ->
@@ -48,6 +51,7 @@ class UsersListViewModel @Inject constructor(
             }
             .subscribe()
         )
+        _isShowProgress.postValue(false)
     }
 
     fun fetchAccessToken(code: String) {
@@ -72,5 +76,6 @@ class UsersListViewModel @Inject constructor(
 
     companion object {
         private val TAG = UsersListViewModel::class.java.simpleName
+        private const val PER_PAGE = 20
     }
 }
