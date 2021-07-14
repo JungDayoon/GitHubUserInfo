@@ -6,14 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.githubuserinfo.R
 import com.example.githubuserinfo.data.User
+import com.example.githubuserinfo.ui.common.DialogUtils
 import javax.inject.Inject
 
-class UsersAdapter @Inject constructor(private val activity: AppCompatActivity) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
+class UsersAdapter @Inject constructor(
+    private val activity: AppCompatActivity
+) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
 
     private var usersList = arrayListOf<User>()
 
@@ -28,7 +33,6 @@ class UsersAdapter @Inject constructor(private val activity: AppCompatActivity) 
     }
 
     fun bindData(users: List<User>) {
-        Log.d(TAG, "bindData usersList: $users")
         usersList.clear()
         usersList.addAll(users)
         this.notifyDataSetChanged()
@@ -41,6 +45,9 @@ class UsersAdapter @Inject constructor(private val activity: AppCompatActivity) 
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         holder.bind(usersList[position])
+        holder.itemView.setOnClickListener {
+            DialogUtils.showUserInfoDialog(activity, usersList[position].login)
+        }
     }
 
     override fun getItemCount(): Int {

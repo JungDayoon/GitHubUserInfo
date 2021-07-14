@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">GitHubUserInfo</string>
     <string name="scheme_name">githubuserinfo</string>
+    <string name="dialog_info">유저명: %1$s</string>
 </resources>
